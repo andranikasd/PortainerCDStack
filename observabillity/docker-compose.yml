@@ -20,8 +20,12 @@ services:
     ports:
       - "9100:9100"
     command:
-      - "--path.rootfs=/host"
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/host'
     volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
       - /:/host:ro
 
   prometheus:
