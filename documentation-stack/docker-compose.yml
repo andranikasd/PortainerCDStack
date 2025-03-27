@@ -27,6 +27,7 @@ services:
     restart: unless-stopped
     environment:
       SECRET_KEY: ${SECRET_KEY}
+      UTILS_SECRET: ${UTILS_SECRET}
       URL: https://docs.andranik.me
 
       # Database
