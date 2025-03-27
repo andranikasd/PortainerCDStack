@@ -15,23 +15,21 @@ services:
       - wikinet
 
   wikijs:
-    image: requarks/wiki:latest
+    image: requarks/wiki:2
     container_name: wikijs
+    restart: unless-stopped
     depends_on:
       - postgres
-    restart: unless-stopped
-    environment:
-      - DB_TYPE=postgres
-      - DB_HOST=wikijs_postgres
-      - DB_USER=wikijs
-      - DB_PASS=wikijs_pass
-      - DB_NAME=wikijs
-      - DB_SSL=false
-      - DB_PORT=5432
     ports:
       - "3002:3000"
-    # volumes:
-    #   - ./config.yml:/wiki/config.yml:ro
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: wikijs
+      DB_PASS: wikijs_pass
+      DB_NAME: wikijs
+      DB_SSL: "false"         # Set as string to avoid issues
     networks:
       - wikinet
 
