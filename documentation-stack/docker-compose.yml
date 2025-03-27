@@ -26,6 +26,7 @@ services:
       - DB_USER=wikijs
       - DB_PASS=wikijs_pass
       - DB_NAME=wikijs
+      - DB_SSL=false
     ports:
       - "3002:3000"
     # volumes:
