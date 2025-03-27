@@ -15,22 +15,15 @@ services:
       - wikinet
 
   wikijs:
-    image: requarks/wiki:latest
+    image: requarks/wiki:2
     container_name: wikijs
-    restart: unless-stopped
     depends_on:
       - postgres
+    restart: unless-stopped
     ports:
       - "3002:3000"
-    environment:
-      DB_TYPE: postgres
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: wikijs
-      DB_PASS: wikijs_pass
-      DB_NAME: wikijs
-      # Optional: base URL
-      # APP_URL: https://wiki.andranik.me
+    volumes:
+      - ./config.yml:/wiki/config.yml:ro
     networks:
       - wikinet
 

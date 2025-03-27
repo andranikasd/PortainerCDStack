@@ -1,0 +1,14 @@
+port: 3000
+bindIP: 0.0.0.0
+db:
+  type: postgres
+  host: postgres
+  port: 5432
+  user: wikijs
+  pass: wikijs_pass
+  db: wikijs
+  ssl: false
+ha: false
+logLevel: info
+logFormat: default
+offline: false
