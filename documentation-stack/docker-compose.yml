@@ -34,6 +34,7 @@ services:
       FILE_STORAGE: local
       FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/uploads
       PGSSLMODE: disable
+      ENABLE_EMAIL_SIGNIN: "true"
 
       # Database
     volumes:
