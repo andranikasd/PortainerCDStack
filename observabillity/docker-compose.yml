@@ -1,54 +1,65 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  cadvisor:
-    image: google/cadvisor:latest
-    container_name: cadvisor
+  postgres:
+    image: postgres:15
+    container_name: zabbix_postgres
     restart: unless-stopped
-    privileged: true
-    cgroupns_mode: host
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-
-  node_exporter:
-    image: prom/node-exporter:latest
-    container_name: node_exporter
-    restart: unless-stopped
-    ports:
-      - "9100:9100"
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/host'
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/host:ro
-
-  prometheus:
-    build:
-      context: prometheus
-      dockerfile: Dockerfile
-    container_name: prometheus
-    restart: unless-stopped
-    ports:
-      - "9090:9090"
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-
-  grafana:
-    build:
-      context: grafana
-      dockerfile: Dockerfile
-    container_name: grafana
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix_pass
+      POSTGRES_DB: zabbix
+    volumes:
+      - zabbix_db:/var/lib/postgresql/data
+    networks:
+      - zabbix_net
+
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:alpine-6.4-latest
+    container_name: zabbix_server
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    environment:
+      DB_SERVER_HOST: postgres
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix_pass
+    volumes:
+      - zabbix_srv:/var/lib/zabbix
+    networks:
+      - zabbix_net
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-6.4-latest
+    container_name: zabbix_web
+    depends_on:
+      - zabbix-server
+    restart: unless-stopped
+    environment:
+      DB_SERVER_HOST: postgres
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: zabbix_pass
+      ZBX_SERVER_HOST: zabbix-server
+      PHP_TZ: UTC
+    ports:
+      - "8080:8080" # HTTP UI
+    networks:
+      - zabbix_net
+
+  zabbix-agent:
+    image: zabbix/zabbix-agent:alpine-6.4-latest
+    container_name: zabbix_agent
+    restart: unless-stopped
+    environment:
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_HOSTNAME: docker-agent
+    networks:
+      - zabbix_net
+
+volumes:
+  zabbix_db:
+  zabbix_srv:
+
+networks:
+  zabbix_net:
+    driver: bridge
