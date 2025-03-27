@@ -15,7 +15,7 @@ services:
       - wikinet
 
   wikijs:
-    image: requarks/wiki:2
+    image: requarks/wiki:latest
     container_name: wikijs
     depends_on:
       - postgres
