@@ -20,6 +20,12 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_USER=wikijs
+      - DB_PASS=wikijs_pass
+      - DB_NAME=wikijs
     ports:
       - "3002:3000"
     # volumes:
