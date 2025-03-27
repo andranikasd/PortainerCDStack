@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  rundeck:
+    image: rundeck/rundeck:5.1.0
+    container_name: rundeck
+    ports:
+      - "4440:4440"  # Expose only if not using reverse proxy
+    environment:
+      - RUNDECK_GRAILS_URL=https://rundeck.prt.anranik.me
+      - RUNDECK_SERVER_ADDRESS=0.0.0.0
+      - RUNDECK_SERVER_PORT=4440
+      - RUNDECK_SERVER_FORWARDED=true
+      - RUNDECK_TOKENS_FILE=/home/rundeck/etc/tokens.properties
+      - RUNDECK_LOGGING_STRATEGY=ASYNC
+      - RUNDECK_JVM_SETTINGS=-Xms512m -Xmx1024m
+      - TZ=UTC
+    volumes:
+      - rundeck_data:/home/rundeck/server/data
+      - rundeck_config:/home/rundeck/etc
+      - rundeck_logs:/home/rundeck/server/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4440"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  rundeck_data:
+  rundeck_config:
+  rundeck_logs:
