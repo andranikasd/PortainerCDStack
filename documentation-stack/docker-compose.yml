@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: outline
+      POSTGRES_USER: outline
+      POSTGRES_PASSWORD: outlinepass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - outline-net
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    networks:
+      - outline-net
+
+  outline:
+    image: outlinewiki/outline:latest
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    environment:
+      URL: https://docs.andranik.me
+
+      # Database
+      DATABASE_URL: postgres://outline:outlinepass@postgres:5432/outline
+      REDIS_URL: redis://redis:6379
+      FILE_STORAGE: local
+      FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/uploads
+
+    volumes:
+      - outline_data:/var/lib/outline/uploads
+    networks:
+      - outline-net
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  outline_data:
+
+networks:
+  outline-net:
