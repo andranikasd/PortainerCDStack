@@ -29,13 +29,13 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       UTILS_SECRET: ${UTILS_SECRET}
       URL: https://docs.andranik.me
-
-      # Database
       DATABASE_URL: postgres://outline:outlinepass@postgres:5432/outline
       REDIS_URL: redis://redis:6379
       FILE_STORAGE: local
       FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/uploads
+      PGSSLMODE: disable
 
+      # Database
     volumes:
       - outline_data:/var/lib/outline/uploads
     networks:
