@@ -26,6 +26,7 @@ services:
       - redis
     restart: unless-stopped
     environment:
+      SECRET_KEY: {SECRET_KEY}
       URL: https://docs.andranik.me
 
       # Database
