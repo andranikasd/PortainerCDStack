@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
     environment:
       - DB_TYPE=postgres
-      - DB_HOST=postgres
+      - DB_HOST=wikijs_postgres
       - DB_USER=wikijs
       - DB_PASS=wikijs_pass
       - DB_NAME=wikijs
